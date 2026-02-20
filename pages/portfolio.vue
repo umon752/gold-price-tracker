@@ -257,7 +257,7 @@ const calc = reactive({ grams: 0, cost: 0 })
 const calcImportMsg = ref('')
 const calcImportMsgColor = ref('color: var(--up)')
 
-function importHoldings() {
+async function importHoldings() {
   calcImportMsg.value = ''
   if (!calc.grams || calc.grams <= 0) {
     calcImportMsg.value = '請輸入有效克數'
@@ -270,7 +270,7 @@ function importHoldings() {
     return
   }
   const avgCost = calc.cost / calc.grams
-  portfolio.addTrade({
+  await portfolio.addTrade({
     type: 'buy',
     date: new Date().toISOString().split('T')[0],
     grams: calc.grams,
@@ -311,7 +311,7 @@ const form = reactive<Omit<TTradeRecord, 'id'>>({
 })
 const formError = ref('')
 
-function submitTrade() {
+async function submitTrade() {
   formError.value = ''
 
   if (!form.grams || form.grams <= 0) {
@@ -327,7 +327,7 @@ function submitTrade() {
     return
   }
 
-  portfolio.addTrade({
+  await portfolio.addTrade({
     type: form.type,
     date: form.date,
     grams: form.grams,
@@ -343,9 +343,9 @@ function submitTrade() {
   form.note = ''
 }
 
-function confirmRemove(id: string) {
+async function confirmRemove(id: string) {
   if (confirm('確定要刪除此筆交易記錄？')) {
-    portfolio.removeTrade(id)
+    await portfolio.removeTrade(id)
   }
 }
 

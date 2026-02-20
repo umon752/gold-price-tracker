@@ -1,8 +1,8 @@
 export function usePortfolio() {
   const portfolioStore = usePortfolioStore()
 
-  onMounted(() => {
-    portfolioStore.init()
+  onMounted(async () => {
+    await portfolioStore.init()
   })
 
   return portfolioStore
