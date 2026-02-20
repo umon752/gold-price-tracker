@@ -9,7 +9,11 @@ export default defineEventHandler(async (event): Promise<TNewsItem[]> => {
 
   if (newsApiKey) {
     try {
-      const baseParams = { q: 'gold price OR XAU OR 黃金', sortBy: 'publishedAt', apiKey: newsApiKey }
+      const baseParams = {
+        q: '(gold price OR XAU/USD OR gold futures OR gold ETF OR COMEX gold OR 黃金價格 OR 黃金走勢 OR 金價) AND (price OR market OR Fed OR inflation OR 通膨 OR 聯準會 OR 美元)',
+        sortBy: 'publishedAt',
+        apiKey: newsApiKey,
+      }
 
       // 中文優先，不足的用英文補足
       const [zhRes, enRes] = await Promise.all([
