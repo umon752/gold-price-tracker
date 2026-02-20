@@ -302,9 +302,14 @@ const calcResult = computed(() => {
 })
 
 // 表單狀態
+const todayLocal = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 const form = reactive<Omit<TTradeRecord, 'id'>>({
   type: 'buy',
-  date: new Date().toISOString().split('T')[0],
+  date: todayLocal(),
   grams: 0,
   pricePerGram: 0,
   note: '',
