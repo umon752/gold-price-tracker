@@ -139,6 +139,12 @@ const brief = useState("ai-brief", () => "");
 const briefLoading = ref(false);
 
 onMounted(async () => {
+  const saved = localStorage.getItem("ai-brief");
+  if (saved) brief.value = saved;
+  watch(brief, (val) => {
+    if (val) localStorage.setItem("ai-brief", val);
+    else localStorage.removeItem("ai-brief");
+  });
   await newsStore.fetch();
   // 新聞載入後自動執行 AI 情緒分析
   applyAiSentiment();

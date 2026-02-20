@@ -462,6 +462,15 @@ const aiResult = useState<{ analysis: string; suggestion: string } | null>(
   () => null,
 );
 
+onMounted(() => {
+  const saved = localStorage.getItem("ai-portfolio-result");
+  if (saved) aiResult.value = JSON.parse(saved);
+  watch(aiResult, (val) => {
+    if (val) localStorage.setItem("ai-portfolio-result", JSON.stringify(val));
+    else localStorage.removeItem("ai-portfolio-result");
+  });
+});
+
 async function fetchAiAnalysis() {
   if (!portfolio.trades.length) return;
   aiLoading.value = true;
