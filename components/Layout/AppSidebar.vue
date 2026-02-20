@@ -57,7 +57,7 @@
         v-else
         class="w-full py-2 rounded-lg text-xs font-semibold transition-colors"
         style="border: 1px solid var(--border); color: var(--text-2)"
-        @click="showAuthModal = true"
+        @click="openLogin()"
       >
         登入 / 註冊
       </button>
@@ -90,7 +90,7 @@
     </div>
   </aside>
 
-  <AuthAuthModal :show="showAuthModal" @close="showAuthModal = false" />
+  <AuthAuthModal :show="showAuthModal" :initial-step="authModalInitialStep" @close="showAuthModal = false" />
   </div>
 </template>
 
@@ -102,8 +102,24 @@ const colorMode = useColorMode()
 const isDark = computed(() => colorMode.value === 'dark')
 const authStore = useAuthStore()
 const showAuthModal = ref(false)
+const authModalInitialStep = ref<'prompt' | 'email'>('email')
 
-onMounted(() => authStore.init())
+const ASKED_KEY = 'gold_auth_asked'
+
+onMounted(async () => {
+  await authStore.init()
+  // 首次進入且未登入 → 自動彈出提示
+  if (!authStore.isLoggedIn && !localStorage.getItem(ASKED_KEY)) {
+    localStorage.setItem(ASKED_KEY, '1')
+    authModalInitialStep.value = 'prompt'
+    showAuthModal.value = true
+  }
+})
+
+function openLogin() {
+  authModalInitialStep.value = 'email'
+  showAuthModal.value = true
+}
 
 const navItems = [
   { to: '/', label: '儀表板', icon: '◎' },
