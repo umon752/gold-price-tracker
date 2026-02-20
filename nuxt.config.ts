@@ -22,12 +22,17 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
 
+  colorMode: {
+    preference: 'dark',
+  },
+
   css: ['~/assets/css/main.css'],
 
   runtimeConfig: {
     // Server-only (private)
     newsApiKey: process.env.NEWS_API_KEY,
     goldApiKey: process.env.GOLD_API_KEY,
+    geminiApiKey: process.env.GEMINI_API_KEY,
     // Public (exposed to client)
     public: {
       appName: 'Gold Price Tracker',

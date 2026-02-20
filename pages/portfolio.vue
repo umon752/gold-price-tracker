@@ -1,6 +1,8 @@
 <template>
   <div class="space-y-6">
-    <h1 class="font-display text-3xl font-semibold" style="color: var(--text)">損益</h1>
+    <h1 class="font-display text-3xl font-semibold" style="color: var(--text)">
+      損益
+    </h1>
 
     <!-- P&L 摘要卡片 -->
     <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
@@ -11,16 +13,34 @@
         style="background: var(--surface); border: 1px solid var(--border)"
       >
         <p class="stat-label mb-1">{{ card.label }}</p>
-        <p class="price-value text-xl font-bold" :style="`color: ${card.color}`">{{ card.value }}</p>
-        <p v-if="card.sub" class="text-xs mt-1" :style="`color: ${card.subColor ?? 'var(--text-2)'}`">{{ card.sub }}</p>
+        <p
+          class="price-value text-xl font-bold"
+          :style="`color: ${card.color}`"
+        >
+          {{ card.value }}
+        </p>
+        <p
+          v-if="card.sub"
+          class="text-xs mt-1"
+          :style="`color: ${card.subColor ?? 'var(--text-2)'}`"
+        >
+          {{ card.sub }}
+        </p>
       </div>
     </div>
 
     <!-- 快速試算 -->
-    <div class="rounded-2xl p-5" style="background: var(--surface); border: 1px solid var(--border)">
+    <div
+      class="rounded-2xl p-5"
+      style="background: var(--surface); border: 1px solid var(--border)"
+    >
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold" style="color: var(--text)">快速試算 / 匯入庫存</h2>
-        <p class="text-xs" style="color: var(--text-3)">輸入目前持有克數與總投資金額，可直接匯入為一筆記錄</p>
+        <h2 class="text-sm font-semibold" style="color: var(--text)">
+          快速試算 / 匯入庫存
+        </h2>
+        <p class="text-xs" style="color: var(--text-3)">
+          輸入目前持有克數與總投資金額，可直接匯入為一筆記錄
+        </p>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         <div>
@@ -32,7 +52,11 @@
             step="0.01"
             placeholder="0.00"
             class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none price-value"
-            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text)"
+            style="
+              background: var(--surface-2);
+              border: 1px solid var(--border);
+              color: var(--text);
+            "
           />
         </div>
         <div>
@@ -44,7 +68,11 @@
             step="1"
             placeholder="0"
             class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none price-value"
-            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text)"
+            style="
+              background: var(--surface-2);
+              border: 1px solid var(--border);
+              color: var(--text);
+            "
           />
         </div>
       </div>
@@ -53,22 +81,36 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
         <div>
           <p class="stat-label mb-1">平均成本</p>
-          <p class="price-value text-lg font-medium" style="color: var(--text)">{{ calcResult.avgCost }}</p>
+          <p class="price-value text-lg font-medium" style="color: var(--text)">
+            {{ calcResult.avgCost }}
+          </p>
           <p class="stat-label mt-0.5">元 / 克</p>
         </div>
         <div>
           <p class="stat-label mb-1">市值 B</p>
-          <p class="price-value text-lg font-medium" style="color: var(--text)">{{ calcResult.marketValue }}</p>
+          <p class="price-value text-lg font-medium" style="color: var(--text)">
+            {{ calcResult.marketValue }}
+          </p>
           <p class="stat-label mt-0.5">元</p>
         </div>
         <div>
           <p class="stat-label mb-1">預估損益（B − A）</p>
-          <p class="price-value text-lg font-medium" :style="calcResult.pnlColor">{{ calcResult.pnl }}</p>
+          <p
+            class="price-value text-lg font-medium"
+            :style="calcResult.pnlColor"
+          >
+            {{ calcResult.pnl }}
+          </p>
           <p class="stat-label mt-0.5">元</p>
         </div>
         <div>
           <p class="stat-label mb-1">預估損益率</p>
-          <p class="price-value text-lg font-medium" :style="calcResult.pnlColor">{{ calcResult.pnlRate }}</p>
+          <p
+            class="price-value text-lg font-medium"
+            :style="calcResult.pnlColor"
+          >
+            {{ calcResult.pnlRate }}
+          </p>
         </div>
       </div>
 
@@ -82,30 +124,58 @@
         >
           匯入為交易記錄
         </button>
-        <p v-if="calcImportMsg" class="text-xs" :style="calcImportMsgColor">{{ calcImportMsg }}</p>
+        <p v-if="calcImportMsg" class="text-xs" :style="calcImportMsgColor">
+          {{ calcImportMsg }}
+        </p>
       </div>
     </div>
 
     <!-- 新增交易 -->
-    <div class="rounded-2xl p-5" style="background: var(--surface); border: 1px solid var(--border)">
+    <div
+      class="rounded-2xl p-5"
+      style="background: var(--surface); border: 1px solid var(--border)"
+    >
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold" style="color: var(--text)">新增交易</h2>
+        <h2 class="text-sm font-semibold" style="color: var(--text)">
+          新增交易
+        </h2>
       </div>
 
-      <div v-if="!isMarketOpen" class="mb-3 flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs" style="background: color-mix(in srgb, var(--text-3) 10%, transparent); color: var(--text-2)">
+      <div
+        v-if="!isMarketOpen"
+        class="mb-3 flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs"
+        style="
+          background: color-mix(in srgb, var(--text-3) 10%, transparent);
+          color: var(--text-2);
+        "
+      >
         <span>🔒</span>
-        <span>目前為休市時間（臺灣銀行黃金交易：週一至週五 09:00–17:00），無法新增交易。</span>
+        <span
+          >目前為休市時間（臺灣銀行黃金交易：週一至週五
+          09:00–17:00），無法新增交易。</span
+        >
       </div>
 
-      <form class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-end" :class="!isMarketOpen ? 'opacity-50 pointer-events-none' : ''" @submit.prevent="submitTrade">
+      <form
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-end"
+        :class="!isMarketOpen ? 'opacity-50 pointer-events-none' : ''"
+        @submit.prevent="submitTrade"
+      >
         <!-- 買入/賣出 -->
         <div>
           <label class="stat-label block mb-1">類型</label>
-          <div class="flex rounded-lg overflow-hidden" style="border: 1px solid var(--border)">
+          <div
+            class="flex rounded-lg overflow-hidden"
+            style="border: 1px solid var(--border)"
+          >
             <button
               type="button"
               class="flex-1 py-2 text-sm font-medium transition-colors"
-              :style="form.type === 'buy' ? 'background: var(--up); color: white' : 'background: var(--surface-2); color: var(--text-2)'"
+              :style="
+                form.type === 'buy'
+                  ? 'background: var(--up); color: white'
+                  : 'background: var(--surface-2); color: var(--text-2)'
+              "
               @click="form.type = 'buy'"
             >
               買入
@@ -113,7 +183,11 @@
             <button
               type="button"
               class="flex-1 py-2 text-sm font-medium transition-colors"
-              :style="form.type === 'sell' ? 'background: var(--down); color: white' : 'background: var(--surface-2); color: var(--text-2)'"
+              :style="
+                form.type === 'sell'
+                  ? 'background: var(--down); color: white'
+                  : 'background: var(--surface-2); color: var(--text-2)'
+              "
               @click="form.type = 'sell'"
             >
               賣出
@@ -129,7 +203,11 @@
             type="date"
             required
             class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
-            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text)"
+            style="
+              background: var(--surface-2);
+              border: 1px solid var(--border);
+              color: var(--text);
+            "
           />
         </div>
 
@@ -144,7 +222,11 @@
             placeholder="0"
             required
             class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
-            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text)"
+            style="
+              background: var(--surface-2);
+              border: 1px solid var(--border);
+              color: var(--text);
+            "
           />
         </div>
 
@@ -159,7 +241,11 @@
             placeholder="0"
             required
             class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
-            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text)"
+            style="
+              background: var(--surface-2);
+              border: 1px solid var(--border);
+              color: var(--text);
+            "
           />
         </div>
 
@@ -171,7 +257,11 @@
             type="text"
             placeholder="備註..."
             class="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
-            style="background: var(--surface-2); border: 1px solid var(--border); color: var(--text)"
+            style="
+              background: var(--surface-2);
+              border: 1px solid var(--border);
+              color: var(--text);
+            "
           />
         </div>
 
@@ -187,16 +277,27 @@
         </div>
       </form>
 
-      <p v-if="formError" class="text-xs mt-2" style="color: var(--down)">{{ formError }}</p>
+      <p v-if="formError" class="text-xs mt-2" style="color: var(--down)">
+        {{ formError }}
+      </p>
     </div>
 
     <!-- 交易記錄 -->
-    <div class="rounded-2xl overflow-hidden" style="background: var(--surface); border: 1px solid var(--border)">
+    <div
+      class="rounded-2xl overflow-hidden"
+      style="background: var(--surface); border: 1px solid var(--border)"
+    >
       <div class="px-5 py-4" style="border-bottom: 1px solid var(--border)">
-        <h2 class="text-sm font-semibold" style="color: var(--text)">交易記錄</h2>
+        <h2 class="text-sm font-semibold" style="color: var(--text)">
+          交易記錄
+        </h2>
       </div>
 
-      <div v-if="portfolio.trades.length === 0" class="text-center py-12 text-sm" style="color: var(--text-3)">
+      <div
+        v-if="portfolio.trades.length === 0"
+        class="text-center py-12 text-sm"
+        style="color: var(--text-3)"
+      >
         尚無交易記錄，請新增第一筆交易
       </div>
 
@@ -217,22 +318,51 @@
             v-for="trade in [...portfolio.trades].reverse()"
             :key="trade.id"
             style="border-bottom: 1px solid var(--border)"
-            @mouseenter="(e) => (e.currentTarget as HTMLElement).style.background='var(--surface-2)'"
-            @mouseleave="(e) => (e.currentTarget as HTMLElement).style.background=''"
+            @mouseenter="
+              (e) =>
+                ((e.currentTarget as HTMLElement).style.background =
+                  'var(--surface-2)')
+            "
+            @mouseleave="
+              (e) => ((e.currentTarget as HTMLElement).style.background = '')
+            "
           >
-            <td class="px-5 py-3" style="color: var(--text-2)">{{ formatDate(trade.date) }}</td>
+            <td class="px-5 py-3" style="color: var(--text-2)">
+              {{ formatDate(trade.date) }}
+            </td>
             <td class="px-5 py-3">
               <span
                 class="px-2 py-0.5 rounded text-xs font-medium"
-                :style="trade.type === 'buy' ? 'background: rgba(26,122,74,0.12); color: var(--up)' : 'background: rgba(197,48,48,0.12); color: var(--down)'"
+                :style="
+                  trade.type === 'buy'
+                    ? 'background: rgba(26,122,74,0.12); color: var(--up)'
+                    : 'background: rgba(197,48,48,0.12); color: var(--down)'
+                "
               >
-                {{ trade.type === 'buy' ? '買入' : '賣出' }}
+                {{ trade.type === "buy" ? "買入" : "賣出" }}
               </span>
             </td>
-            <td class="px-5 py-3 text-right price-value" style="color: var(--text)">{{ formatGrams(trade.grams) }}</td>
-            <td class="px-5 py-3 text-right price-value" style="color: var(--text)">{{ formatCurrency(trade.pricePerGram) }}</td>
-            <td class="px-5 py-3 text-right price-value" style="color: var(--text)">{{ formatCurrency(trade.grams * trade.pricePerGram) }}</td>
-            <td class="px-5 py-3 text-xs" style="color: var(--text-3)">{{ trade.note ?? '—' }}</td>
+            <td
+              class="px-5 py-3 text-right price-value"
+              style="color: var(--text)"
+            >
+              {{ formatGrams(trade.grams) }}
+            </td>
+            <td
+              class="px-5 py-3 text-right price-value"
+              style="color: var(--text)"
+            >
+              {{ formatCurrency(trade.pricePerGram) }}
+            </td>
+            <td
+              class="px-5 py-3 text-right price-value"
+              style="color: var(--text)"
+            >
+              {{ formatCurrency(trade.grams * trade.pricePerGram) }}
+            </td>
+            <td class="px-5 py-3 text-xs" style="color: var(--text-3)">
+              {{ trade.note ?? "—" }}
+            </td>
             <td class="px-5 py-3 text-center">
               <button
                 class="text-xs transition-colors"
@@ -246,104 +376,215 @@
         </tbody>
       </table>
     </div>
+
+    <!-- AI 分析 -->
+    <div
+      v-if="portfolio.trades.length > 0"
+      class="rounded-2xl p-5 space-y-4"
+      style="background: var(--surface); border: 1px solid var(--border)"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-semibold" style="color: var(--text)">
+            ✦ AI 智能分析
+          </h2>
+          <p class="text-xs mt-0.5" style="color: var(--text-3)">
+            交易分析報告 & 操作建議
+          </p>
+        </div>
+        <button
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity"
+          style="background: var(--gold); color: white"
+          :class="aiLoading ? 'opacity-60' : ''"
+          :disabled="aiLoading"
+          @click="fetchAiAnalysis"
+        >
+          {{ aiLoading ? "分析中…" : aiResult ? "重新分析" : "開始分析" }}
+        </button>
+      </div>
+
+      <div
+        v-if="aiLoading"
+        class="flex items-center gap-2 text-xs"
+        style="color: var(--text-3)"
+      >
+        <span class="animate-spin">◌</span> AI 分析中，請稍候…
+      </div>
+
+      <template v-if="aiResult && !aiLoading">
+        <div
+          class="rounded-xl p-4 text-sm leading-relaxed"
+          style="background: var(--surface-2); color: var(--text-2)"
+        >
+          <p class="text-xs font-semibold mb-2" style="color: var(--gold)">
+            📊 交易分析報告
+          </p>
+          <p>{{ aiResult.analysis }}</p>
+        </div>
+        <div
+          class="rounded-xl p-4 text-sm leading-relaxed"
+          style="background: var(--surface-2); color: var(--text-2)"
+        >
+          <p class="text-xs font-semibold mb-2" style="color: var(--gold)">
+            💡 操作建議
+          </p>
+          <p>{{ aiResult.suggestion }}</p>
+        </div>
+        <p class="text-xs" style="color: var(--text-3)">
+          AI 分析僅供參考，投資有風險，請自行判斷。
+        </p>
+      </template>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { TTradeRecord } from '~/types/portfolio'
+import type { TTradeRecord } from "~/types/portfolio";
 
-useHead({ title: '投資損益 | 黃金金價追蹤' })
+useHead({ title: "投資損益 | 黃金金價追蹤" });
 
-const goldStore = useGoldPrice()
-const portfolio = usePortfolio()
+const goldStore = useGoldPrice();
+const portfolio = usePortfolio();
 
 // 臺灣銀行黃金交易時間：週一~五 09:00-17:00 (UTC+8)
 const isMarketOpen = computed(() => {
-  const now = new Date()
-  const tw = new Date(now.getTime() + 8 * 60 * 60 * 1000) // 轉 UTC+8
-  const day = tw.getUTCDay()   // 0=日 6=六
-  const hour = tw.getUTCHours()
-  return day >= 1 && day <= 5 && hour >= 9 && hour < 17
-})
+  const now = new Date();
+  const tw = new Date(now.getTime() + 8 * 60 * 60 * 1000); // 轉 UTC+8
+  const day = tw.getUTCDay(); // 0=日 6=六
+  const hour = tw.getUTCHours();
+  return day >= 1 && day <= 5 && hour >= 9 && hour < 17;
+});
+
+// AI 分析
+const aiLoading = ref(false);
+const aiResult = useState<{ analysis: string; suggestion: string } | null>(
+  "ai-portfolio-result",
+  () => null,
+);
+
+async function fetchAiAnalysis() {
+  if (!portfolio.trades.length) return;
+  aiLoading.value = true;
+  aiResult.value = null;
+  try {
+    const currentPrice = goldStore.current?.todaySell ?? 0;
+    const summary = portfolio.summary;
+    const [analysisRes, suggestionRes] = await Promise.all([
+      $fetch<{ analysis: string }>("/api/ai/trade-analysis", {
+        method: "POST",
+        body: { trades: portfolio.trades, currentPrice },
+      }),
+      $fetch<{ suggestion: string }>("/api/ai/suggestion", {
+        method: "POST",
+        body: {
+          totalGrams: summary.totalGrams,
+          avgCost: summary.avgCostPerGram,
+          currentPrice,
+          pnlRate: summary.unrealizedPnLPercent,
+        },
+      }),
+    ]);
+    aiResult.value = {
+      analysis: analysisRes.analysis,
+      suggestion: suggestionRes.suggestion,
+    };
+  } catch (e) {
+    console.error("[AI]", e);
+  } finally {
+    aiLoading.value = false;
+  }
+}
 
 // 快速試算
-const calc = reactive({ grams: 0, cost: 0 })
-const calcImportMsg = ref('')
-const calcImportMsgColor = ref('color: var(--up)')
+const calc = reactive({ grams: 0, cost: 0 });
+const calcImportMsg = ref("");
+const calcImportMsgColor = ref("color: var(--up)");
 
 async function importHoldings() {
-  calcImportMsg.value = ''
+  calcImportMsg.value = "";
   if (!calc.grams || calc.grams <= 0) {
-    calcImportMsg.value = '請輸入有效克數'
-    calcImportMsgColor.value = 'color: var(--down)'
-    return
+    calcImportMsg.value = "請輸入有效克數";
+    calcImportMsgColor.value = "color: var(--down)";
+    return;
   }
   if (!calc.cost || calc.cost <= 0) {
-    calcImportMsg.value = '請輸入有效投資金額'
-    calcImportMsgColor.value = 'color: var(--down)'
-    return
+    calcImportMsg.value = "請輸入有效投資金額";
+    calcImportMsgColor.value = "color: var(--down)";
+    return;
   }
-  const avgCost = calc.cost / calc.grams
+  const avgCost = calc.cost / calc.grams;
   await portfolio.addTrade({
-    type: 'buy',
-    date: new Date().toISOString().split('T')[0],
+    type: "buy",
+    date: new Date().toISOString().split("T")[0],
     grams: calc.grams,
     pricePerGram: Math.round(avgCost),
-    note: '庫存匯入',
-  })
-  calcImportMsg.value = `已匯入 ${calc.grams}g，平均成本 ${Math.round(avgCost).toLocaleString()} 元/克`
-  calcImportMsgColor.value = 'color: var(--up)'
-  calc.grams = 0
-  calc.cost = 0
+    note: "庫存匯入",
+  });
+  calcImportMsg.value = `已匯入 ${calc.grams}g，平均成本 ${Math.round(avgCost).toLocaleString()} 元/克`;
+  calcImportMsgColor.value = "color: var(--up)";
+  calc.grams = 0;
+  calc.cost = 0;
 }
 const calcResult = computed(() => {
-  const g = calc.grams || 0
-  const a = calc.cost || 0
-  const price = goldStore.current?.todayBuy ?? 0
-  const avgCost = g > 0 ? a / g : 0
-  const b = g * price
-  const pnl = b - a
-  const pnlRate = a > 0 ? (pnl / a) * 100 : 0
-  const color = pnl > 0 ? 'color: var(--up)' : pnl < 0 ? 'color: var(--down)' : 'color: var(--text)'
-  const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+  const g = calc.grams || 0;
+  const a = calc.cost || 0;
+  const price = goldStore.current?.todayBuy ?? 0;
+  const avgCost = g > 0 ? a / g : 0;
+  const b = g * price;
+  const pnl = b - a;
+  const pnlRate = a > 0 ? (pnl / a) * 100 : 0;
+  const color =
+    pnl > 0
+      ? "color: var(--up)"
+      : pnl < 0
+        ? "color: var(--down)"
+        : "color: var(--text)";
+  const fmt = (n: number) =>
+    n.toLocaleString("zh-TW", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
   return {
-    avgCost: g > 0 ? fmt(avgCost) : '—',
-    marketValue: price > 0 && g > 0 ? fmt(b) : '—',
-    pnl: a > 0 && price > 0 ? (pnl >= 0 ? '+' : '') + fmt(pnl) : '—',
-    pnlRate: a > 0 && price > 0 ? (pnlRate >= 0 ? '+' : '') + pnlRate.toFixed(2) + '%' : '—',
+    avgCost: g > 0 ? fmt(avgCost) : "—",
+    marketValue: price > 0 && g > 0 ? fmt(b) : "—",
+    pnl: a > 0 && price > 0 ? (pnl >= 0 ? "+" : "") + fmt(pnl) : "—",
+    pnlRate:
+      a > 0 && price > 0
+        ? (pnlRate >= 0 ? "+" : "") + pnlRate.toFixed(2) + "%"
+        : "—",
     pnlColor: color,
-  }
-})
+  };
+});
 
 // 表單狀態
 const todayLocal = () => {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 
-const form = reactive<Omit<TTradeRecord, 'id'>>({
-  type: 'buy',
+const form = reactive<Omit<TTradeRecord, "id">>({
+  type: "buy",
   date: todayLocal(),
   grams: 0,
   pricePerGram: 0,
-  note: '',
-})
-const formError = ref('')
+  note: "",
+});
+const formError = ref("");
 
 async function submitTrade() {
-  formError.value = ''
+  formError.value = "";
 
   if (!form.grams || form.grams <= 0) {
-    formError.value = '請輸入有效克數'
-    return
+    formError.value = "請輸入有效克數";
+    return;
   }
   if (!form.pricePerGram || form.pricePerGram <= 0) {
-    formError.value = '請輸入有效單價'
-    return
+    formError.value = "請輸入有效單價";
+    return;
   }
-  if (form.type === 'sell' && form.grams > portfolio.summary.totalGrams) {
-    formError.value = `賣出克數（${form.grams}g）超過持有量（${portfolio.summary.totalGrams.toFixed(2)}g）`
-    return
+  if (form.type === "sell" && form.grams > portfolio.summary.totalGrams) {
+    formError.value = `賣出克數（${form.grams}g）超過持有量（${portfolio.summary.totalGrams.toFixed(2)}g）`;
+    return;
   }
 
   await portfolio.addTrade({
@@ -352,61 +593,106 @@ async function submitTrade() {
     grams: form.grams,
     pricePerGram: form.pricePerGram,
     note: form.note || undefined,
-  })
+  });
 
   // 重置數量與備註，保留類型與日期
-  form.grams = 0
+  form.grams = 0;
   form.pricePerGram = goldStore.current
-    ? (form.type === 'buy' ? goldStore.current.todayBuy : goldStore.current.todaySell)
-    : 0
-  form.note = ''
+    ? form.type === "buy"
+      ? goldStore.current.todayBuy
+      : goldStore.current.todaySell
+    : 0;
+  form.note = "";
 }
 
 async function confirmRemove(id: string) {
-  if (confirm('確定要刪除此筆交易記錄？')) {
-    await portfolio.removeTrade(id)
+  if (confirm("確定要刪除此筆交易記錄？")) {
+    await portfolio.removeTrade(id);
   }
 }
 
 // 摘要卡片
 const summaryCards = computed(() => {
-  const s = portfolio.summary
-  const pnl = s.unrealizedPnL
-  const realized = s.realizedPnL
+  const s = portfolio.summary;
+  const pnl = s.unrealizedPnL;
+  const realized = s.realizedPnL;
 
-  const breakEven = s.totalGrams > 0 ? s.avgCostPerGram : 0
-  const sellPrice = goldStore.current?.todaySell ?? 0
-  const breakEvenDiff = breakEven > 0 && sellPrice > 0 ? sellPrice - breakEven : null
-  const breakEvenPct = breakEven > 0 && breakEvenDiff !== null ? (breakEvenDiff / breakEven) * 100 : null
+  const breakEven = s.totalGrams > 0 ? s.avgCostPerGram : 0;
+  const sellPrice = goldStore.current?.todaySell ?? 0;
+  const breakEvenDiff =
+    breakEven > 0 && sellPrice > 0 ? sellPrice - breakEven : null;
+  const breakEvenPct =
+    breakEven > 0 && breakEvenDiff !== null
+      ? (breakEvenDiff / breakEven) * 100
+      : null;
 
   return [
-    { label: '目前持有', value: formatGrams(s.totalGrams), color: 'var(--gold)', sub: `平均成本 ${formatCurrency(s.avgCostPerGram)}/克`, subColor: 'var(--text-2)' },
-    { label: '目前市值', value: formatCurrency(s.currentValue), color: 'var(--text)', sub: '', subColor: 'var(--text-2)' },
-    { label: '未實現損益', value: formatCurrency(pnl), color: pnl >= 0 ? 'var(--up)' : 'var(--down)', sub: s.totalCost > 0 ? formatPercent(s.unrealizedPnLPercent) : '', subColor: 'var(--text-2)' },
-    { label: '已實現損益', value: formatCurrency(realized), color: realized >= 0 ? 'var(--up)' : 'var(--down)', sub: '', subColor: 'var(--text-2)' },
     {
-      label: '損益平衡點',
-      value: breakEven > 0 ? `${Math.round(breakEven).toLocaleString()} 元/克` : '—',
-      color: 'var(--text)',
-      sub: breakEvenDiff !== null && breakEvenPct !== null
-        ? `距平衡點 ${breakEvenDiff >= 0 ? '+' : ''}${Math.round(breakEvenDiff).toLocaleString()} 元 (${breakEvenPct >= 0 ? '+' : ''}${breakEvenPct.toFixed(2)}%)`
-        : '',
-      subColor: breakEvenDiff !== null ? (breakEvenDiff >= 0 ? 'var(--up)' : 'var(--down)') : 'var(--text-2)',
+      label: "目前持有",
+      value: formatGrams(s.totalGrams),
+      color: "var(--gold)",
+      sub: `平均成本 ${formatCurrency(s.avgCostPerGram)}/克`,
+      subColor: "var(--text-2)",
     },
-  ]
-})
+    {
+      label: "目前市值",
+      value: formatCurrency(s.currentValue),
+      color: "var(--text)",
+      sub: "",
+      subColor: "var(--text-2)",
+    },
+    {
+      label: "未實現損益",
+      value: formatCurrency(pnl),
+      color: pnl >= 0 ? "var(--up)" : "var(--down)",
+      sub: s.totalCost > 0 ? formatPercent(s.unrealizedPnLPercent) : "",
+      subColor: "var(--text-2)",
+    },
+    {
+      label: "已實現損益",
+      value: formatCurrency(realized),
+      color: realized >= 0 ? "var(--up)" : "var(--down)",
+      sub: "",
+      subColor: "var(--text-2)",
+    },
+    {
+      label: "損益平衡點",
+      value:
+        breakEven > 0 ? `${Math.round(breakEven).toLocaleString()} 元/克` : "—",
+      color: "var(--text)",
+      sub:
+        breakEvenDiff !== null && breakEvenPct !== null
+          ? `距平衡點 ${breakEvenDiff >= 0 ? "+" : ""}${Math.round(breakEvenDiff).toLocaleString()} 元 (${breakEvenPct >= 0 ? "+" : ""}${breakEvenPct.toFixed(2)}%)`
+          : "",
+      subColor:
+        breakEvenDiff !== null
+          ? breakEvenDiff >= 0
+            ? "var(--up)"
+            : "var(--down)"
+          : "var(--text-2)",
+    },
+  ];
+});
 
 // 表單預設單價同步金價
-watch(() => goldStore.current, (c) => {
-  if (c && form.pricePerGram === 0) {
-    form.pricePerGram = form.type === 'buy' ? c.todayBuy : c.todaySell
-  }
-})
+watch(
+  () => goldStore.current,
+  (c) => {
+    if (c && form.pricePerGram === 0) {
+      form.pricePerGram = form.type === "buy" ? c.todayBuy : c.todaySell;
+    }
+  },
+);
 
-watch(() => form.type, (type) => {
-  if (goldStore.current) {
-    form.pricePerGram = type === 'buy' ? goldStore.current.todayBuy : goldStore.current.todaySell
-  }
-})
+watch(
+  () => form.type,
+  (type) => {
+    if (goldStore.current) {
+      form.pricePerGram =
+        type === "buy"
+          ? goldStore.current.todayBuy
+          : goldStore.current.todaySell;
+    }
+  },
+);
 </script>
-
