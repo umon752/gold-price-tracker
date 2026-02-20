@@ -1,4 +1,5 @@
 <template>
+  <div>
   <aside
     class="flex flex-col fixed inset-y-0 left-0 z-30 w-56
            md:sticky md:top-0 md:h-screen md:translate-x-0
@@ -87,8 +88,10 @@
         </button>
       </div>
     </div>
+  </aside>
 
   <AuthAuthModal :show="showAuthModal" @close="showAuthModal = false" />
+  </div>
 </template>
 
 <script setup lang="ts">
