@@ -1,16 +1,19 @@
 import type { TTradeRecord } from '~/types/portfolio'
 import { calcPortfolioSummary } from '~/utils/calculation'
+import { loadTrades, saveTrades } from '~/utils/storage'
 
 export const usePortfolioStore = defineStore('portfolio', () => {
   const trades = ref<TTradeRecord[]>([])
   const loading = ref(false)
-  const { $supabase } = useNuxtApp()
+  const nuxtApp = useNuxtApp()
+  const db = computed(() => (nuxtApp.$supabase as ReturnType<typeof import('@supabase/supabase-js').createClient> | undefined) ?? null)
 
-  /** 確保匿名登入，回傳 user_id */
+  /** 確保匿名登入，回傳 user_id。無 Supabase 時回傳 null */
   async function ensureUser(): Promise<string | null> {
-    const { data: { session } } = await $supabase.auth.getSession()
+    if (!db.value) return null
+    const { data: { session } } = await db.value.auth.getSession()
     if (session?.user) return session.user.id
-    const { data, error } = await $supabase.auth.signInAnonymously()
+    const { data, error } = await db.value.auth.signInAnonymously()
     if (error) { console.error('[portfolio] 匿名登入失敗', error); return null }
     return data.user?.id ?? null
   }
@@ -19,8 +22,12 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     loading.value = true
     try {
       const userId = await ensureUser()
-      if (!userId) return
-      const { data, error } = await $supabase
+      if (!userId) {
+        // Fallback：從 localStorage 載入
+        trades.value = loadTrades()
+        return
+      }
+      const { data, error } = await db.value!
         .from('trades')
         .select('*')
         .eq('user_id', userId)
@@ -36,6 +43,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       }))
     } catch (e) {
       console.error('[portfolio] 載入交易記錄失敗', e)
+      trades.value = loadTrades()
     } finally {
       loading.value = false
     }
@@ -43,8 +51,14 @@ export const usePortfolioStore = defineStore('portfolio', () => {
 
   async function addTrade(trade: Omit<TTradeRecord, 'id'>) {
     const userId = await ensureUser()
-    if (!userId) return
-    const { data, error } = await $supabase
+    if (!userId) {
+      // Fallback：localStorage
+      const newTrade: TTradeRecord = { ...trade, id: Date.now().toString() }
+      trades.value = [...trades.value, newTrade].sort((a, b) => a.date.localeCompare(b.date))
+      saveTrades(trades.value)
+      return
+    }
+    const { data, error } = await db.value!
       .from('trades')
       .insert({
         user_id: userId,
@@ -69,7 +83,12 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function removeTrade(id: string) {
-    const { error } = await $supabase.from('trades').delete().eq('id', id)
+    if (!db.value) {
+      trades.value = trades.value.filter(t => t.id !== id)
+      saveTrades(trades.value)
+      return
+    }
+    const { error } = await db.value.from('trades').delete().eq('id', id)
     if (error) { console.error('[portfolio] 刪除失敗', error); return }
     trades.value = trades.value.filter(t => t.id !== id)
   }
