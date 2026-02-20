@@ -45,7 +45,9 @@ button, [role="button"], a { cursor: pointer; }
   letter-spacing: -0.02em;
 }
 
-/* ── Stat label style ───────────────────────── */
+/* ── Date input color scheme ────────────────── */
+input[type="date"] { color-scheme: light; }
+.dark input[type="date"] { color-scheme: dark; }
 .stat-label {
   font-size: 0.65rem;
   font-weight: 500;
