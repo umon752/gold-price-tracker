@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* Tailwind v4: use .dark class for dark mode */
+@variant dark (&:where(.dark, .dark *));
+
+/* ── Fonts ─────────────────────────────────── */
+body { font-family: 'Outfit', sans-serif; }
+.font-display { font-family: 'Cormorant', serif; }
+.font-mono, .tabular-nums { font-family: 'DM Mono', monospace; }
+
+/* ── Design tokens ──────────────────────────── */
+:root {
+  --gold:        #C4973F;
+  --gold-light:  #E8C97A;
+  --surface:     #FAFAF8;
+  --surface-2:   #F2F2EF;
+  --border:      #E5E5E2;
+  --text:        #111110;
+  --text-2:      #6B6B67;
+  --text-3:      #A8A8A4;
+  --up:          #1A7A4A;
+  --down:        #C53030;
+}
+.dark {
+  --gold:        #D4A84B;
+  --gold-light:  #EBD080;
+  --surface:     #0D0D0C;
+  --surface-2:   #161614;
+  --border:      #252522;
+  --text:        #F0F0EE;
+  --text-2:      #888884;
+  --text-3:      #505050;
+  --up:          #34D399;
+  --down:        #F87171;
+}
+
+/* ── Global ─────────────────────────────────── */
+button, [role="button"], a { cursor: pointer; }
+* { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease; }
+
+/* ── Price number style ─────────────────────── */
+.price-value {
+  font-family: 'DM Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ── Stat label style ───────────────────────── */
+.stat-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}

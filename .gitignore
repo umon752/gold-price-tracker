@@ -1,40 +1,56 @@
-# ===== Nuxt =====
-.nuxt/
-.output/
-.data/
-.nitro/
-.cache/
-dist/
+# Dependencies
+node_modules
 
-# ===== Node =====
-node_modules/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+# Logs
+*.log*
 
-# ===== 環境變數 =====
+# Temp directories
+.temp
+.tmp
+.cache
+
+# Yarn
+**/.yarn/cache
+**/.yarn/*state*
+
+# Generated dirs
+dist
+
+# Nuxt
+.nuxt
+.output
+.data
+.vercel_build_output
+.build-*
+.netlify
+
+# Env
 .env
-.env.*
-!.env.example
 
-# ===== 編輯器 =====
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# ===== 測試 / 覆蓋率 =====
-coverage/
+# Testing
+reports
+coverage
 *.lcov
-.vitest-results/
+.nyc_output
 
-# ===== 其他 =====
-*.local
-*.tsbuildinfo
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Intellij idea
+*.iml
+.idea
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
