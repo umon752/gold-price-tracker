@@ -139,7 +139,7 @@ const chartOption = computed<EChartsOption>(() => {
       textStyle: { color: '#F0F0EE', fontSize: 11, fontFamily: 'DM Mono' },
       formatter: (params: unknown) => {
         const ps = params as Array<{ seriesName: string; value: number; name: string; color: string }>
-        return `<span style="color:#888884;font-size:10px">${ps[0]?.name}</span><br/>${ps.map(p => `<span style="color:${p.color}">■</span> ${p.seriesName} <span style="font-family:DM Mono">${p.value.toLocaleString()}</span>`).join('<br/>')}`
+        return `<span style="color:#888884;font-size:12px">${ps[0]?.name}</span><br/>${ps.map(p => `<span style="color:${p.color}">■</span> ${p.seriesName} <span style="font-family:DM Mono">${p.value.toLocaleString()}</span>`).join('<br/>')}`
       },
     },
     dataZoom: [{ type: 'inside', start: 0, end: 100 }],

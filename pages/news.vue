@@ -57,23 +57,19 @@
       </template>
     </div>
 
-    <div class="flex flex-wrap items-center gap-3 text-xs">
-      <span class="stat-label">標籤說明：</span>
-      <span
-        class="px-2 py-0.5 rounded font-medium"
-        style="background: rgba(26, 122, 74, 0.12); color: var(--up)"
-        >利多 — 對金價有正面影響</span
-      >
-      <span
-        class="px-2 py-0.5 rounded font-medium"
-        style="background: var(--surface-2); color: var(--text-3)"
-        >中立 — 影響方向不明確</span
-      >
-      <span
-        class="px-2 py-0.5 rounded font-medium"
-        style="background: rgba(197, 48, 48, 0.12); color: var(--down)"
-        >利空 — 對金價有負面影響</span
-      >
+    <div class="flex flex-wrap items-center gap-4 text-xs">
+      <div class="flex items-center gap-1.5">
+        <span class="px-2 py-0.5 rounded font-medium" style="background: rgba(26, 122, 74, 0.12); color: var(--up)">利多</span>
+        <span style="color: var(--text-3)">對金價有正面影響</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="px-2 py-0.5 rounded font-medium" style="background: var(--surface-2); color: var(--text-3)">中立</span>
+        <span style="color: var(--text-3)">影響方向不明確</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="px-2 py-0.5 rounded font-medium" style="background: rgba(197, 48, 48, 0.12); color: var(--down)">利空</span>
+        <span style="color: var(--text-3)">對金價有負面影響</span>
+      </div>
     </div>
 
     <div v-if="newsStore.loading" class="grid grid-cols-1 md:grid-cols-2 gap-4">
