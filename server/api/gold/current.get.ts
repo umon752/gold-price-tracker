@@ -37,7 +37,7 @@ async function fetchTaiwanBankGold(): Promise<TTaiwanBankGold> {
   }
 }
 
-// TODO: 替換為台灣銀行實際 API（https://rate.bot.com.tw/gold）
+// TODO: 替換為臺灣銀行實際 API（https://rate.bot.com.tw/gold）
 export default defineEventHandler(async (): Promise<TGoldPriceSummary> => {
   // 優先使用臺銀即時資料
   const live = await fetchTaiwanBankGold()

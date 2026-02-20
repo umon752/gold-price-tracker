@@ -16,7 +16,7 @@ export function getMockNews(): TNewsItem[] {
     },
     {
       id: '2',
-      title: '台灣銀行調整黃金牌告價格',
+      title: '臺灣銀行調整黃金牌告價格',
       summary: '台銀公告最新黃金買入及賣出牌告價格，反映近期國際金價波動，投資人可依牌告價進行交易。',
       source: '工商時報',
       publishedAt: new Date(now - 5 * h).toISOString(),

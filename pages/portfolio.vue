@@ -94,7 +94,7 @@
 
       <div v-if="!isMarketOpen" class="mb-3 flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs" style="background: color-mix(in srgb, var(--text-3) 10%, transparent); color: var(--text-2)">
         <span>🔒</span>
-        <span>目前為休市時間（台灣銀行黃金交易：週一至週五 09:00–17:00），無法新增交易。</span>
+        <span>目前為休市時間（臺灣銀行黃金交易：週一至週五 09:00–17:00），無法新增交易。</span>
       </div>
 
       <form class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-end" :class="!isMarketOpen ? 'opacity-50 pointer-events-none' : ''" @submit.prevent="submitTrade">
@@ -257,7 +257,7 @@ useHead({ title: '投資損益 | 黃金金價追蹤' })
 const goldStore = useGoldPrice()
 const portfolio = usePortfolio()
 
-// 台灣銀行黃金交易時間：週一~五 09:00-17:00 (UTC+8)
+// 臺灣銀行黃金交易時間：週一~五 09:00-17:00 (UTC+8)
 const isMarketOpen = computed(() => {
   const now = new Date()
   const tw = new Date(now.getTime() + 8 * 60 * 60 * 1000) // 轉 UTC+8
