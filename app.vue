@@ -56,6 +56,13 @@
         <LayoutAppFooter />
       </div>
     </div>
+
+    <!-- 首次訪問登入提示 -->
+    <AuthAuthModal
+      :show="showFirstVisitModal"
+      initial-step="prompt"
+      @close="showFirstVisitModal = false"
+    />
   </div>
 </template>
 
@@ -68,6 +75,21 @@ watch(
     sidebarOpen.value = false;
   },
 );
+
+const authStore = useAuthStore()
+const showFirstVisitModal = ref(false)
+const ASKED_KEY = 'gold_auth_asked'
+
+onMounted(() => {
+  authStore.init()
+  // 首次進入且未登入 → 延遲顯示提示彈窗
+  setTimeout(() => {
+    if (!localStorage.getItem(ASKED_KEY)) {
+      localStorage.setItem(ASKED_KEY, '1')
+      showFirstVisitModal.value = true
+    }
+  }, 800)
+})
 </script>
 
 <style scoped>

@@ -104,16 +104,8 @@ const authStore = useAuthStore()
 const showAuthModal = ref(false)
 const authModalInitialStep = ref<'prompt' | 'email'>('email')
 
-const ASKED_KEY = 'gold_auth_asked'
-
 onMounted(async () => {
-  await authStore.init()
-  // 首次進入且未登入 → 自動彈出提示
-  if (!authStore.isLoggedIn && !localStorage.getItem(ASKED_KEY)) {
-    localStorage.setItem(ASKED_KEY, '1')
-    authModalInitialStep.value = 'prompt'
-    showAuthModal.value = true
-  }
+  authStore.init()
 })
 
 function openLogin() {
