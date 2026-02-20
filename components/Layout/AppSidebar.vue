@@ -43,9 +43,26 @@
     </nav>
 
     <!-- Dark/Light Toggle -->
-    <div class="px-6 py-5 shrink-0" style="border-top: 1px solid var(--border)">
+    <div class="px-6 py-4 shrink-0 space-y-3" style="border-top: 1px solid var(--border)">
+      <!-- 登入狀態 -->
+      <div v-if="authStore.isLoggedIn" class="flex items-center justify-between">
+        <div class="min-w-0">
+          <p class="stat-label">已登入</p>
+          <p class="text-xs truncate mt-0.5" style="color: var(--text-2)">{{ authStore.user?.email }}</p>
+        </div>
+        <button class="stat-label transition-colors hover:text-red-400" style="color: var(--text-3)" @click="authStore.signOut()">登出</button>
+      </div>
+      <button
+        v-else
+        class="w-full py-2 rounded-lg text-xs font-semibold transition-colors"
+        style="border: 1px solid var(--border); color: var(--text-2)"
+        @click="showAuthModal = true"
+      >
+        登入 / 註冊
+      </button>
+
+      <!-- Dark/Light -->
       <div class="flex items-center justify-between">
-        <!-- Moon / Sun SVG icon -->
         <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-3)">
           <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
         </svg>
@@ -70,7 +87,8 @@
         </button>
       </div>
     </div>
-  </aside>
+
+  <AuthAuthModal :show="showAuthModal" @close="showAuthModal = false" />
 </template>
 
 <script setup lang="ts">
@@ -79,6 +97,10 @@ const emit = defineEmits<{ close: [] }>()
 
 const colorMode = useColorMode()
 const isDark = computed(() => colorMode.value === 'dark')
+const authStore = useAuthStore()
+const showAuthModal = ref(false)
+
+onMounted(() => authStore.init())
 
 const navItems = [
   { to: '/', label: '儀表板', icon: '◎' },

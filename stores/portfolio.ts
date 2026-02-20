@@ -8,22 +8,18 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const nuxtApp = useNuxtApp()
   const db = computed(() => (nuxtApp.$supabase as ReturnType<typeof import('@supabase/supabase-js').createClient> | undefined) ?? null)
 
-  /** 確保匿名登入，回傳 user_id。無 Supabase 時回傳 null */
-  async function ensureUser(): Promise<string | null> {
+  /** 取得目前登入的 user_id（需 auth store 已初始化）。無 Supabase 或未登入時回傳 null */
+  async function getUserId(): Promise<string | null> {
     if (!db.value) return null
     const { data: { session } } = await db.value.auth.getSession()
-    if (session?.user) return session.user.id
-    const { data, error } = await db.value.auth.signInAnonymously()
-    if (error) { console.error('[portfolio] 匿名登入失敗', error); return null }
-    return data.user?.id ?? null
+    return session?.user?.id ?? null
   }
 
   async function init() {
     loading.value = true
     try {
-      const userId = await ensureUser()
+      const userId = await getUserId()
       if (!userId) {
-        // Fallback：從 localStorage 載入
         trades.value = loadTrades()
         return
       }
@@ -50,9 +46,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function addTrade(trade: Omit<TTradeRecord, 'id'>) {
-    const userId = await ensureUser()
+    const userId = await getUserId()
     if (!userId) {
-      // Fallback：localStorage
       const newTrade: TTradeRecord = { ...trade, id: Date.now().toString() }
       trades.value = [...trades.value, newTrade].sort((a, b) => a.date.localeCompare(b.date))
       saveTrades(trades.value)
