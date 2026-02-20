@@ -57,9 +57,9 @@
         v-else
         class="w-full py-2 rounded-lg text-xs font-semibold transition-colors"
         style="border: 1px solid var(--border); color: var(--text-2)"
-        @click="openLogin()"
+        @click="$emit('open-auth')"
       >
-        登入 / 註冊
+        登入
       </button>
 
       <!-- Dark/Light -->
@@ -89,29 +89,20 @@
       </div>
     </div>
   </aside>
-
-  <AuthAuthModal :show="showAuthModal" :initial-step="authModalInitialStep" @close="showAuthModal = false" />
   </div>
 </template>
 
 <script setup lang="ts">
 defineProps<{ mobileOpen: boolean }>()
-const emit = defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: []; 'open-auth': [] }>()
 
 const colorMode = useColorMode()
 const isDark = computed(() => colorMode.value === 'dark')
 const authStore = useAuthStore()
-const showAuthModal = ref(false)
-const authModalInitialStep = ref<'prompt' | 'email'>('email')
 
-onMounted(async () => {
+onMounted(() => {
   authStore.init()
 })
-
-function openLogin() {
-  authModalInitialStep.value = 'email'
-  showAuthModal.value = true
-}
 
 const navItems = [
   { to: '/', label: '儀表板', icon: '◎' },

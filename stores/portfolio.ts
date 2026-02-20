@@ -88,11 +88,34 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     trades.value = trades.value.filter(t => t.id !== id)
   }
 
+  /** 登入後將 localStorage 的資料匯入 Supabase（若有資料） */
+  async function migrateFromLocalStorage(): Promise<boolean> {
+    const localTrades = loadTrades()
+    if (!localTrades.length || !db.value) return false
+    const userId = await getUserId()
+    if (!userId) return false
+    // 先確認 Supabase 是否已有資料（避免重複匯入）
+    const { data: existing } = await db.value.from('trades').select('id').eq('user_id', userId).limit(1)
+    if (existing && existing.length > 0) return false
+    const rows = localTrades.map(t => ({
+      user_id: userId,
+      type: t.type,
+      date: t.date,
+      grams: t.grams,
+      price_per_gram: t.pricePerGram,
+      note: t.note ?? null,
+    }))
+    const { error } = await db.value.from('trades').insert(rows)
+    if (error) { console.error('[portfolio] 匯入失敗', error); return false }
+    await init()
+    return true
+  }
+
   const goldStore = useGoldStore()
   const summary = computed(() =>
     calcPortfolioSummary(trades.value, goldStore.current?.todaySell ?? 0),
   )
 
-  return { trades, loading, summary, init, addTrade, removeTrade }
+  return { trades, loading, summary, init, addTrade, removeTrade, migrateFromLocalStorage }
 })
 
