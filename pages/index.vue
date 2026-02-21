@@ -207,7 +207,7 @@
 
     <!-- International Gold Price -->
     <div>
-      <div class="flex items-end justify-between">
+      <div class="flex items-end justify-between mb-8">
         <div>
           <p class="stat-label mb-1">COMEX 黃金期貨</p>
           <h2
