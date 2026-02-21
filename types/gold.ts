@@ -6,6 +6,14 @@ export type TGoldPricePoint = {
   sellPrice: number   // 黃金存摺賣出價（台銀售出，元/克）
 }
 
+export type TInternationalGoldPrice = {
+  priceUSD: number      // 現貨價格（USD / troy oz）
+  priceUSDPerGram: number // 每克美元價格
+  change: number        // 24h 漲跌（USD）
+  changePercent: number // 24h 漲跌幅（%）
+  updatedAt: string
+}
+
 export type TGoldPriceSummary = {
   todayBuy: number    // 今日存摺買入價
   todaySell: number   // 今日存摺賣出價

@@ -1,7 +1,7 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8">
     <h1 class="font-display text-3xl font-semibold" style="color: var(--text)">
-      損益
+      我的損益
     </h1>
 
     <!-- P&L 摘要卡片 -->
@@ -34,7 +34,7 @@
       class="rounded-2xl p-5"
       style="background: var(--surface); border: 1px solid var(--border)"
     >
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center justify-between mb-4 gap-2 flex-wrap">
         <h2 class="text-sm font-semibold" style="color: var(--text)">
           快速試算 / 匯入庫存
         </h2>
@@ -301,80 +301,116 @@
         尚無交易記錄，請新增第一筆交易
       </div>
 
-      <table v-else class="w-full text-sm">
-        <thead>
-          <tr style="border-bottom: 1px solid var(--border)">
-            <th class="stat-label px-5 py-3 text-left font-medium">日期</th>
-            <th class="stat-label px-5 py-3 text-left font-medium">類型</th>
-            <th class="stat-label px-5 py-3 text-right font-medium">克數</th>
-            <th class="stat-label px-5 py-3 text-right font-medium">單價</th>
-            <th class="stat-label px-5 py-3 text-right font-medium">總金額</th>
-            <th class="stat-label px-5 py-3 text-left font-medium">備註</th>
-            <th class="stat-label px-5 py-3 text-center font-medium">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="trade in [...portfolio.trades].reverse()"
-            :key="trade.id"
-            style="border-bottom: 1px solid var(--border)"
-            @mouseenter="
-              (e) =>
-                ((e.currentTarget as HTMLElement).style.background =
-                  'var(--surface-2)')
-            "
-            @mouseleave="
-              (e) => ((e.currentTarget as HTMLElement).style.background = '')
-            "
-          >
-            <td class="px-5 py-3" style="color: var(--text-2)">
-              {{ formatDate(trade.date) }}
-            </td>
-            <td class="px-5 py-3">
-              <span
-                class="px-2 py-0.5 rounded text-xs font-medium"
-                :style="
-                  trade.type === 'buy'
-                    ? 'background: rgba(26,122,74,0.12); color: var(--up)'
-                    : 'background: rgba(197,48,48,0.12); color: var(--down)'
-                "
+      <div v-else class="table-scroll overflow-x-auto">
+        <table class="w-full text-sm" style="min-width: 540px">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border)">
+              <th
+                class="stat-label px-5 py-3 text-left font-medium whitespace-nowrap"
               >
-                {{ trade.type === "buy" ? "買入" : "賣出" }}
-              </span>
-            </td>
-            <td
-              class="px-5 py-3 text-right price-value"
-              style="color: var(--text)"
-            >
-              {{ formatGrams(trade.grams) }}
-            </td>
-            <td
-              class="px-5 py-3 text-right price-value"
-              style="color: var(--text)"
-            >
-              {{ formatCurrency(trade.pricePerGram) }}
-            </td>
-            <td
-              class="px-5 py-3 text-right price-value"
-              style="color: var(--text)"
-            >
-              {{ formatCurrency(trade.grams * trade.pricePerGram) }}
-            </td>
-            <td class="px-5 py-3 text-xs" style="color: var(--text-3)">
-              {{ trade.note ?? "—" }}
-            </td>
-            <td class="px-5 py-3 text-center">
-              <button
-                class="text-xs transition-colors"
-                style="color: var(--down)"
-                @click="confirmRemove(trade.id)"
+                日期
+              </th>
+              <th
+                class="stat-label px-5 py-3 text-left font-medium whitespace-nowrap"
               >
-                刪除
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                類型
+              </th>
+              <th
+                class="stat-label px-5 py-3 text-right font-medium whitespace-nowrap"
+              >
+                克數
+              </th>
+              <th
+                class="stat-label px-5 py-3 text-right font-medium whitespace-nowrap"
+              >
+                單價
+              </th>
+              <th
+                class="stat-label px-5 py-3 text-right font-medium whitespace-nowrap"
+              >
+                總金額
+              </th>
+              <th
+                class="stat-label px-5 py-3 text-left font-medium whitespace-nowrap"
+              >
+                備註
+              </th>
+              <th
+                class="stat-label px-5 py-3 text-center font-medium whitespace-nowrap"
+              >
+                操作
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="trade in [...portfolio.trades].reverse()"
+              :key="trade.id"
+              style="border-bottom: 1px solid var(--border)"
+              @mouseenter="
+                (e) =>
+                  ((e.currentTarget as HTMLElement).style.background =
+                    'var(--surface-2)')
+              "
+              @mouseleave="
+                (e) => ((e.currentTarget as HTMLElement).style.background = '')
+              "
+            >
+              <td
+                class="px-5 py-3 whitespace-nowrap"
+                style="color: var(--text-2)"
+              >
+                {{ formatDate(trade.date) }}
+              </td>
+              <td class="px-5 py-3 whitespace-nowrap">
+                <span
+                  class="px-2 py-0.5 rounded text-xs font-medium"
+                  :style="
+                    trade.type === 'buy'
+                      ? 'background: rgba(26,122,74,0.12); color: var(--up)'
+                      : 'background: rgba(197,48,48,0.12); color: var(--down)'
+                  "
+                >
+                  {{ trade.type === "buy" ? "買入" : "賣出" }}
+                </span>
+              </td>
+              <td
+                class="px-5 py-3 text-right price-value whitespace-nowrap"
+                style="color: var(--text)"
+              >
+                {{ formatGrams(trade.grams) }}
+              </td>
+              <td
+                class="px-5 py-3 text-right price-value whitespace-nowrap"
+                style="color: var(--text)"
+              >
+                {{ formatCurrency(trade.pricePerGram) }}
+              </td>
+              <td
+                class="px-5 py-3 text-right price-value whitespace-nowrap"
+                style="color: var(--text)"
+              >
+                {{ formatCurrency(trade.grams * trade.pricePerGram) }}
+              </td>
+              <td
+                class="px-5 py-3 text-xs whitespace-nowrap"
+                style="color: var(--text-3)"
+              >
+                {{ trade.note ?? "—" }}
+              </td>
+              <td class="px-5 py-3 text-center whitespace-nowrap">
+                <button
+                  class="text-xs transition-colors"
+                  style="color: var(--down)"
+                  @click="confirmRemove(trade.id)"
+                >
+                  刪除
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- AI 分析 -->
@@ -705,3 +741,23 @@ watch(
   },
 );
 </script>
+
+<style scoped>
+.table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.table-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.table-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-3);
+}
+</style>

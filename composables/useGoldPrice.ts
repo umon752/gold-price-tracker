@@ -4,6 +4,7 @@ export function useGoldPrice() {
   onMounted(async () => {
     await goldStore.fetchCurrent()
     await goldStore.fetchHistory()
+    goldStore.fetchInternational()
   })
 
   return goldStore
