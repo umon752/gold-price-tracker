@@ -1,5 +1,21 @@
 import type { TGoldPriceSummary } from '~/types/gold'
 import { NON_TRADING_DAYS } from '~/server/utils/goldMockData'
+import type { TGoldPricePoint } from '~/types/gold'
+
+/** 判斷某日是否為非交易日（週末 或 國定假日） */
+function isNonTradingDay(dateStr: string): boolean {
+  if (NON_TRADING_DAYS.has(dateStr)) return true
+  const day = new Date(dateStr).getUTCDay() // 0=日, 6=六
+  return day === 0 || day === 6
+}
+
+/** 從 history 陣列往回找最後一個交易日的 index */
+function findLastTradingIndex(history: TGoldPricePoint[], fromIndex: number): number {
+  for (let i = fromIndex; i >= 0; i--) {
+    if (!isNonTradingDay(history[i].date)) return i
+  }
+  return fromIndex
+}
 
 type TTaiwanBankGold = { buy: number; sell: number } | null
 
@@ -44,24 +60,29 @@ export default defineEventHandler(async (): Promise<TGoldPriceSummary> => {
 
   const history = generateGoldHistory(366)
 
+  const todayDateStr = new Date().toISOString().split('T')[0]
+  const isTodayNonTrading = isNonTradingDay(todayDateStr)
+
+  // 找出最後一個交易日（含今日）及其前一個交易日
+  const lastTradingIdx = findLastTradingIndex(history, history.length - 1)
+  const prevTradingIdx = findLastTradingIndex(history, lastTradingIdx - 1)
+
   let todayBuy: number
   let todaySell: number
 
-  const todayDateStr = new Date().toISOString().split('T')[0]
-  const isTodayNonTrading = NON_TRADING_DAYS.has(todayDateStr)
-
   if (live && !isTodayNonTrading) {
+    // 今日為交易日且臺銀資料可取：使用即時牌告
     todayBuy = live.buy
     todaySell = live.sell
   }
   else {
-    // fallback：使用 mock 資料最後一筆
-    const today = history[history.length - 1]
-    todayBuy = today.buyPrice
-    todaySell = today.sellPrice
+    // 非交易日或即時資料無法取得：以最後一個交易日的收盤價為準
+    todayBuy = history[lastTradingIdx].buyPrice
+    todaySell = history[lastTradingIdx].sellPrice
   }
 
-  const yesterday = history[history.length - 2]
+  const lastTrading = history[lastTradingIdx]
+  const prevTrading = history[prevTradingIdx]
   const weekAgo = history[history.length - 8] ?? history[0]
 
   // 近1月平均：取最近 30 天（不含今日）的買入價平均值
@@ -76,9 +97,9 @@ export default defineEventHandler(async (): Promise<TGoldPriceSummary> => {
   const yearSlice = history.slice(-366, -1)
   const yearAvgBuy = yearSlice.reduce((sum, p) => sum + p.buyPrice, 0) / yearSlice.length
 
-  // 休市日漲跌為 0；否則以今日買入價 vs 昨日買入價計算
-  const change = isTodayNonTrading ? 0 : todayBuy - yesterday.buyPrice
-  const changePercent = isTodayNonTrading ? 0 : (change / yesterday.buyPrice) * 100
+  // 漲跌以最後交易日 vs 前一交易日計算（非交易日也能正確顯示最後交易日漲跌）
+  const change = todayBuy - prevTrading.buyPrice
+  const changePercent = (change / prevTrading.buyPrice) * 100
   const weekChange = todayBuy - weekAgo.buyPrice
   const monthChange = todayBuy - monthAvgBuy
   const threeMonthChange = todayBuy - threeMonthAvgBuy
@@ -93,6 +114,6 @@ export default defineEventHandler(async (): Promise<TGoldPriceSummary> => {
     monthChange,
     threeMonthChange,
     yearChange,
-    updatedAt: new Date().toISOString(),
+    updatedAt: isTodayNonTrading ? lastTrading.date + 'T00:00:00.000Z' : new Date().toISOString(),
   }
 })
