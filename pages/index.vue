@@ -337,6 +337,17 @@
       >
         <p class="stat-label">國際金價暫時無法取得</p>
       </div>
+
+      <!-- 近30日走勢圖 -->
+      <div v-if="goldStore.internationalHistory.length" class="mt-6">
+        <p class="text-sm font-medium mb-4" style="color: var(--text)">近30日走勢</p>
+        <ClientOnly>
+          <VChart :option="intlChartOption" autoresize style="height: 200px" />
+          <template #fallback>
+            <div class="h-[200px] animate-pulse rounded-lg" style="background: var(--surface-2)" />
+          </template>
+        </ClientOnly>
+      </div>
     </div>
 
     <!-- International Gold link -->
@@ -349,6 +360,163 @@
         style="color: var(--gold)"
       >
         ◈ 查看國際金價 →
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <div class="h-px" style="background: var(--border)" />
+
+    <!-- XAUt Gold Price -->
+    <div>
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <p class="stat-label mb-1">Tether Gold (ERC-20)</p>
+          <h2
+            class="font-display text-3xl font-semibold"
+            style="color: var(--text)"
+          >
+            XAUt 金價
+          </h2>
+        </div>
+        <p v-if="goldStore.xaut" class="stat-label hidden sm:block">
+          {{ formatDate(goldStore.xaut.updatedAt, "MM/DD HH:mm") }} 更新
+        </p>
+      </div>
+
+      <div
+        v-if="goldStore.xaut && goldStore.xaut.priceUSD > 0"
+        class="grid grid-cols-1 sm:grid-cols-3 gap-px"
+        style="
+          background: var(--border);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          overflow: hidden;
+        "
+      >
+        <!-- USD price -->
+        <div class="p-6" style="background: var(--surface)">
+          <p class="stat-label mb-3">現貨價格</p>
+          <p
+            class="price-value text-3xl font-medium"
+            style="color: var(--text)"
+          >
+            {{
+              goldStore.xaut.priceUSD.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            }}
+          </p>
+          <p class="stat-label mt-2">USD / XAUt</p>
+          <div class="mt-4 flex items-center gap-2">
+            <span
+              class="price-value text-sm font-medium"
+              :style="
+                goldStore.xaut.change24h >= 0
+                  ? 'color: var(--up)'
+                  : 'color: var(--down)'
+              "
+            >
+              {{ goldStore.xaut.change24h >= 0 ? "+" : ""
+              }}{{ goldStore.xaut.change24h.toFixed(2) }}%
+            </span>
+            <span class="stat-label">24h</span>
+          </div>
+        </div>
+
+        <!-- vs International -->
+        <div class="p-6" style="background: var(--surface)">
+          <p class="stat-label mb-3">與國際金價差距</p>
+          <template v-if="goldStore.international && goldStore.international.priceUSD > 0">
+            <p
+              class="price-value text-3xl font-medium"
+              :style="
+                goldStore.xaut.priceUSD - goldStore.international.priceUSD >= 0
+                  ? 'color: var(--up)'
+                  : 'color: var(--down)'
+              "
+            >
+              {{ (goldStore.xaut.priceUSD - goldStore.international.priceUSD) >= 0 ? "+" : "" }}{{
+                (goldStore.xaut.priceUSD - goldStore.international.priceUSD).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              }}
+            </p>
+            <p class="stat-label mt-2">USD / 盎司</p>
+          </template>
+          <p v-else class="stat-label mt-2">—</p>
+        </div>
+
+        <!-- Info -->
+        <div class="p-6" style="background: var(--surface)">
+          <p class="stat-label mb-3">關於 XAUt</p>
+          <p
+            class="price-value text-sm font-medium mt-2"
+            style="color: var(--text-2)"
+          >
+            1 XAUt = 1 金衡盎司實體黃金
+          </p>
+          <p
+            class="price-value text-sm font-medium mt-2"
+            style="color: var(--text-2)"
+          >
+            由 Tether 發行的黃金代幣
+          </p>
+          <p class="stat-label mt-3">資料來源：CoinGecko</p>
+        </div>
+      </div>
+
+      <!-- Loading skeleton -->
+      <div
+        v-else-if="goldStore.loadingXaut"
+        class="grid grid-cols-1 sm:grid-cols-3 gap-px"
+        style="
+          background: var(--border);
+          border: 1px solid var(--border);
+          border-radius: 16px;
+          overflow: hidden;
+        "
+      >
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="p-6 h-36 animate-pulse"
+          style="background: var(--surface-2)"
+        />
+      </div>
+
+      <!-- Error / unavailable -->
+      <div
+        v-else
+        class="p-6 rounded-2xl text-center"
+        style="background: var(--surface-2); border: 1px solid var(--border)"
+      >
+        <p class="stat-label">XAUt 金價暫時無法取得</p>
+      </div>
+
+      <!-- 近30日走勢圖 -->
+      <div v-if="goldStore.xautHistory.length" class="mt-6">
+        <p class="text-sm font-medium mb-4" style="color: var(--text)">近30日走勢</p>
+        <ClientOnly>
+          <VChart :option="xautChartOption" autoresize style="height: 200px" />
+          <template #fallback>
+            <div class="h-[200px] animate-pulse rounded-lg" style="background: var(--surface-2)" />
+          </template>
+        </ClientOnly>
+      </div>
+    </div>
+
+    <!-- XAUt link -->
+    <div>
+      <a
+        href="https://www.coingecko.com/en/coins/tether-gold"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="stat-label transition-colors"
+        style="color: var(--gold)"
+      >
+        ◈ 查看 XAUt (Tether Gold) →
       </a>
     </div>
   </div>
@@ -380,8 +548,7 @@ const rangeStats = computed(() => {
   ];
 });
 
-const miniChartOption = computed<EChartsOption>(() => {
-  const data = goldStore.history.slice(-30);
+const miniChartOption = computed<EChartsOption>(() => {  const data = goldStore.history.slice(-30);
   return {
     backgroundColor: "transparent",
     grid: { top: 8, right: 8, bottom: 28, left: 52 },
@@ -435,4 +602,82 @@ const miniChartOption = computed<EChartsOption>(() => {
     },
   };
 });
+
+function buildSimpleChartOption(
+  data: { date: string; price: number }[],
+  lineColor: string,
+  areaColorStart: string,
+  areaColorEnd: string,
+  unit: string
+): EChartsOption {
+  return {
+    backgroundColor: "transparent",
+    grid: { top: 8, right: 8, bottom: 28, left: 64 },
+    xAxis: {
+      type: "category",
+      data: data.map((p) => p.date.slice(5)),
+      axisLabel: { color: labelColor.value, fontSize: 10, interval: 4 },
+      axisLine: { lineStyle: { color: borderColor.value } },
+      axisTick: { show: false },
+    },
+    yAxis: {
+      type: "value",
+      scale: true,
+      min: (v: { min: number }) => Math.floor(v.min * 0.999),
+      max: (v: { max: number }) => Math.ceil(v.max * 1.001),
+      axisLabel: { color: labelColor.value, fontSize: 10 },
+      splitLine: { lineStyle: { color: borderColor.value, type: "dashed" } },
+    },
+    series: [
+      {
+        type: "line",
+        data: data.map((p) => p.price),
+        lineStyle: { color: lineColor, width: 1.5 },
+        itemStyle: { color: lineColor },
+        areaStyle: {
+          color: {
+            type: "linear",
+            x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: areaColorStart },
+              { offset: 1, color: areaColorEnd },
+            ],
+          },
+        },
+        smooth: true,
+        showSymbol: false,
+      },
+    ],
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: "#0D0D0C",
+      borderColor: "#252522",
+      textStyle: { color: "#F0F0EE", fontSize: 11, fontFamily: "DM Mono" },
+      formatter: (params: unknown) => {
+        const p = (params as Array<{ name: string; value: number }>)[0];
+        return `${p.name}  ${p.value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${unit}`;
+      },
+    },
+  };
+}
+
+const intlChartOption = computed<EChartsOption>(() =>
+  buildSimpleChartOption(
+    goldStore.internationalHistory,
+    "#C4973F",
+    "rgba(196,151,63,0.15)",
+    "rgba(196,151,63,0)",
+    "USD"
+  )
+);
+
+const xautChartOption = computed<EChartsOption>(() =>
+  buildSimpleChartOption(
+    goldStore.xautHistory,
+    "#8B7355",
+    "rgba(139,115,85,0.15)",
+    "rgba(139,115,85,0)",
+    "USD"
+  )
+);
 </script>

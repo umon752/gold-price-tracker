@@ -1,10 +1,13 @@
 export function useGoldPrice() {
   const goldStore = useGoldStore()
 
-  onMounted(async () => {
-    await goldStore.fetchCurrent()
-    await goldStore.fetchHistory()
+  onMounted(() => {
+    goldStore.fetchCurrent()
+    goldStore.fetchHistory()
     goldStore.fetchInternational()
+    goldStore.fetchXaut()
+    goldStore.fetchInternationalHistory()
+    goldStore.fetchXautHistory()
   })
 
   return goldStore

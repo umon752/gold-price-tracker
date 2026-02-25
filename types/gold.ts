@@ -14,6 +14,17 @@ export type TInternationalGoldPrice = {
   updatedAt: string
 }
 
+export type TXAUtPrice = {
+  priceUSD: number       // 現貨價格（USD / token）
+  change24h: number      // 24h 漲跌幅（%）
+  updatedAt: string
+}
+
+export type TSimplePricePoint = {
+  date: string    // YYYY-MM-DD
+  price: number
+}
+
 export type TGoldPriceSummary = {
   todayBuy: number    // 今日存摺買入價
   todaySell: number   // 今日存摺賣出價
