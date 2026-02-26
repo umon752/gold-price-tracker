@@ -1,6 +1,6 @@
 <template>
   <footer class="px-4 md:px-8 py-5 mt-8" style="border-top: 1px solid var(--border)">
-    <div class="max-w-5xl mx-auto flex items-center justify-between">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <span class="stat-label">
         © {{ year }} 資料來源：
         <a href="https://rate.bot.com.tw/gold" target="_blank" rel="noopener noreferrer"
