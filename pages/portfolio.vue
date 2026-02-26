@@ -644,8 +644,8 @@ async function submitTrade() {
   form.grams = 0;
   form.pricePerGram = goldStore.current
     ? form.type === "buy"
-      ? goldStore.current.todayBuy
-      : goldStore.current.todaySell
+      ? goldStore.current.todaySell
+      : goldStore.current.todayBuy
     : 0;
   form.note = "";
 }
@@ -724,7 +724,7 @@ watch(
   () => goldStore.current,
   (c) => {
     if (c && form.pricePerGram === 0) {
-      form.pricePerGram = form.type === "buy" ? c.todayBuy : c.todaySell;
+      form.pricePerGram = form.type === "buy" ? c.todaySell : c.todayBuy;
     }
   },
 );
@@ -735,8 +735,8 @@ watch(
     if (goldStore.current) {
       form.pricePerGram =
         type === "buy"
-          ? goldStore.current.todayBuy
-          : goldStore.current.todaySell;
+          ? goldStore.current.todaySell
+          : goldStore.current.todayBuy;
     }
   },
 );
