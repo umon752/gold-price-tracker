@@ -10,7 +10,7 @@ export default defineEventHandler(async (event): Promise<TNewsItem[]> => {
   if (newsApiKey) {
     try {
       const baseParams = {
-        q: '(gold price OR XAU/USD OR gold futures OR gold ETF OR COMEX gold OR 黃金價格 OR 黃金走勢 OR 金價) AND (price OR market OR Fed OR inflation OR 通膨 OR 聯準會 OR 美元)',
+        q: '(gold price OR XAU/USD OR gold futures OR gold ETF OR COMEX gold OR 黃金價格 OR 黃金走勢 OR 金價) AND (price OR market OR Fed OR inflation OR war OR conflict OR geopolitical OR sanctions OR 通膨 OR 聯準會 OR 美元 OR 戰爭 OR 地緣政治 OR 制裁)',
         sortBy: 'publishedAt',
         apiKey: newsApiKey,
       }
