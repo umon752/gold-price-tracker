@@ -9,21 +9,28 @@ export default defineEventHandler(async (event): Promise<TNewsItem[]> => {
 
   if (newsApiKey) {
     try {
-      const baseParams = {
+      const goldParams = {
         q: '(gold price OR XAU/USD OR gold futures OR gold ETF OR COMEX gold OR 黃金價格 OR 黃金走勢 OR 金價) AND (price OR market OR Fed OR inflation OR war OR conflict OR geopolitical OR sanctions OR 通膨 OR 聯準會 OR 美元 OR 戰爭 OR 地緣政治 OR 制裁)',
         sortBy: 'publishedAt',
         apiKey: newsApiKey,
       }
+      // 獨立抓取地緣政治衝突新聞（不要求同時提到金價）
+      const geoParams = {
+        q: 'war OR conflict OR military OR invasion OR ceasefire OR 戰爭 OR 衝突 OR 軍事 OR 停火 OR 入侵',
+        sortBy: 'publishedAt',
+        apiKey: newsApiKey,
+      }
 
-      // 中文優先，不足的用英文補足
-      const [zhRes, enRes] = await Promise.all([
-        $fetch<TNewsApiRes>('https://newsapi.org/v2/everything', { params: { ...baseParams, language: 'zh', pageSize: 10 } }).catch(() => ({ articles: [] })),
-        $fetch<TNewsApiRes>('https://newsapi.org/v2/everything', { params: { ...baseParams, language: 'en', pageSize: 10 } }).catch(() => ({ articles: [] })),
+      const [goldZhRes, goldEnRes, geoEnRes] = await Promise.all([
+        $fetch<TNewsApiRes>('https://newsapi.org/v2/everything', { params: { ...goldParams, language: 'zh', pageSize: 8 } }).catch(() => ({ articles: [] })),
+        $fetch<TNewsApiRes>('https://newsapi.org/v2/everything', { params: { ...goldParams, language: 'en', pageSize: 8 } }).catch(() => ({ articles: [] })),
+        $fetch<TNewsApiRes>('https://newsapi.org/v2/everything', { params: { ...geoParams, language: 'en', pageSize: 5 } }).catch(() => ({ articles: [] })),
       ])
 
-      const zhArticles = zhRes.articles
-      const enArticles = enRes.articles.slice(0, Math.max(0, 10 - zhArticles.length))
-      const articles = [...zhArticles, ...enArticles]
+      const goldArticles = [...goldZhRes.articles, ...goldEnRes.articles.slice(0, Math.max(0, 8 - goldZhRes.articles.length))]
+      const seenUrls = new Set(goldArticles.map(a => a.url))
+      const geoArticles = geoEnRes.articles.filter(a => !seenUrls.has(a.url))
+      const articles = [...goldArticles, ...geoArticles]
 
       if (articles.length > 0) {
         return articles.map((a, i) => ({
