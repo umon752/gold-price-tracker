@@ -1,6 +1,7 @@
 import type { TGoldPriceSummary } from '~/types/gold'
 import { NON_TRADING_DAYS } from '~/server/utils/goldMockData'
 import type { TGoldPricePoint } from '~/types/gold'
+import { fetchTaiwanBankHistory } from '~/server/utils/taiwanBankGold'
 
 /** 判斷某日是否為非交易日（週末 或 國定假日） */
 function isNonTradingDay(dateStr: string): boolean {
@@ -55,10 +56,14 @@ async function fetchTaiwanBankGold(): Promise<TTaiwanBankGold> {
 
 // TODO: 替換為臺灣銀行實際 API（https://rate.bot.com.tw/gold）
 export default defineEventHandler(async (): Promise<TGoldPriceSummary> => {
-  // 優先使用臺銀即時資料
-  const live = await fetchTaiwanBankGold()
+  // 並行取得即時牌告與歷史資料
+  const [live, liveHistory] = await Promise.all([
+    fetchTaiwanBankGold(),
+    fetchTaiwanBankHistory('year'),
+  ])
 
-  const history = generateGoldHistory(366)
+  // 優先使用真實歷史資料，fallback 到 mock
+  const history = (liveHistory && liveHistory.length > 90) ? liveHistory : generateGoldHistory(366)
 
   const todayDateStr = new Date().toISOString().split('T')[0]
   const isTodayNonTrading = isNonTradingDay(todayDateStr)
