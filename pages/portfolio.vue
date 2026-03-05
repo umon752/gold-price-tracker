@@ -151,8 +151,7 @@
       >
         <span>🔒</span>
         <span
-          >目前為休市時間（臺灣銀行黃金交易：週一至週五
-          09:00–17:00），無法新增交易。</span
+          >目前為假日（週六、週日），金行休息，無法新增交易。</span
         >
       </div>
 
@@ -482,13 +481,12 @@ useHead({ title: "投資損益 | 黃金金價追蹤" });
 const goldStore = useGoldPrice();
 const portfolio = usePortfolio();
 
-// 臺灣銀行黃金交易時間：週一~五 09:00-17:00 (UTC+8)
+// 金行操作時間：週一~五全天可操作，六日 disabled
 const isMarketOpen = computed(() => {
   const now = new Date();
   const tw = new Date(now.getTime() + 8 * 60 * 60 * 1000); // 轉 UTC+8
   const day = tw.getUTCDay(); // 0=日 6=六
-  const hour = tw.getUTCHours();
-  return day >= 1 && day <= 5 && hour >= 9 && hour < 17;
+  return day >= 1 && day <= 5;
 });
 
 // AI 分析
