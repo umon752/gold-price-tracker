@@ -1,8 +1,31 @@
 <template>
   <div class="space-y-8">
-    <h1 class="font-display text-3xl font-semibold" style="color: var(--text)">
-      我的損益
-    </h1>
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+      <h1 class="font-display text-3xl font-semibold" style="color: var(--text)">
+        我的損益
+      </h1>
+      <div class="flex items-center gap-3">
+        <input
+          ref="csvInput"
+          type="file"
+          accept=".csv,text/csv"
+          class="hidden"
+          @change="handleCsvImport"
+        />
+        <button
+          type="button"
+          class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          style="border: 1px solid var(--border); color: var(--text-2)"
+          @click="csvInput?.click()"
+        >
+          匯入 CSV
+        </button>
+      </div>
+    </div>
+
+    <p v-if="csvImportMsg" class="text-xs -mt-6" :style="csvImportMsgColor">
+      {{ csvImportMsg }}
+    </p>
 
     <!-- P&L 摘要卡片 -->
     <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
@@ -480,6 +503,9 @@ useHead({ title: "投資損益 | 黃金金價追蹤" });
 
 const goldStore = useGoldPrice();
 const portfolio = usePortfolio();
+const csvInput = ref<HTMLInputElement | null>(null);
+const csvImportMsg = ref("");
+const csvImportMsgColor = ref("color: var(--up)");
 
 // 金行操作時間：週一~五全天可操作，六日 disabled
 const isMarketOpen = computed(() => {
@@ -536,6 +562,105 @@ async function fetchAiAnalysis() {
   } finally {
     aiLoading.value = false;
   }
+}
+
+async function handleCsvImport(event: Event) {
+  csvImportMsg.value = "";
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const records = parseTradesCsv(text);
+    if (!records.length) {
+      csvImportMsg.value = "CSV 沒有可匯入的交易資料";
+      csvImportMsgColor.value = "color: var(--down)";
+      return;
+    }
+
+    const result = await portfolio.importTrades(records);
+    csvImportMsg.value = `已匯入 ${result.inserted} 筆交易${result.skipped ? `，略過 ${result.skipped} 筆重複資料` : ""}`;
+    csvImportMsgColor.value = result.inserted > 0 ? "color: var(--up)" : "color: var(--text-3)";
+  } catch (e) {
+    console.error("[portfolio] CSV 匯入失敗", e);
+    csvImportMsg.value = e instanceof Error ? e.message : "CSV 匯入失敗";
+    csvImportMsgColor.value = "color: var(--down)";
+  } finally {
+    input.value = "";
+  }
+}
+
+function parseTradesCsv(text: string): TTradeRecord[] {
+  const rows = parseCsv(text.trim());
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map((header) => header.trim());
+  const index = (name: string) => headers.indexOf(name);
+  const required = ["id", "type", "date", "grams", "price_per_gram"];
+  const missing = required.filter((name) => index(name) === -1);
+  if (missing.length) {
+    throw new Error(`CSV 缺少欄位：${missing.join(", ")}`);
+  }
+
+  return rows.slice(1).map((row, rowIndex) => {
+    const type = row[index("type")]?.trim();
+    const grams = Number(row[index("grams")]);
+    const pricePerGram = Number(row[index("price_per_gram")]);
+    const date = row[index("date")]?.trim();
+    const noteIndex = index("note");
+    const note = noteIndex >= 0 ? row[noteIndex]?.trim() : "";
+
+    if (type !== "buy" && type !== "sell") {
+      throw new Error(`第 ${rowIndex + 2} 列交易類型不正確`);
+    }
+    if (!date || Number.isNaN(grams) || Number.isNaN(pricePerGram)) {
+      throw new Error(`第 ${rowIndex + 2} 列資料格式不正確`);
+    }
+
+    return {
+      id: row[index("id")]?.trim() || `${Date.now()}-${rowIndex}`,
+      type,
+      date,
+      grams,
+      pricePerGram,
+      note: note || undefined,
+    };
+  });
+}
+
+function parseCsv(text: string): string[][] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let cell = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (char === '"' && inQuotes && next === '"') {
+      cell += '"';
+      i += 1;
+    } else if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === "," && !inQuotes) {
+      row.push(cell);
+      cell = "";
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && next === "\n") i += 1;
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += char;
+    }
+  }
+
+  row.push(cell);
+  rows.push(row);
+  return rows.filter((cells) => cells.some((value) => value.trim()));
 }
 
 // 快速試算

@@ -16,6 +16,37 @@ Find and replace all on all files (CMD+SHIFT+F):
 
 My new Nuxt module for doing amazing things.
 
+## Firebase 設定
+
+此專案使用 Firebase Authentication 的 Email Link 登入，以及 Cloud Firestore 同步投資損益交易紀錄。請在 Firebase Console 啟用：
+
+- Authentication > Sign-in method > Email/Password > Email link passwordless sign-in
+- Firestore Database
+
+本機 `.env` 需要設定：
+
+```bash
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
+```
+
+Firestore 資料會寫入 `users/{uid}/trades`。建議規則：
+
+```txt
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/trades/{tradeId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
